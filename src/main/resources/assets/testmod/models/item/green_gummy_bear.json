@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+
+  "textures": {
+    "layer0": "testmod:item/green_gummy_bear1"
+  }
+}

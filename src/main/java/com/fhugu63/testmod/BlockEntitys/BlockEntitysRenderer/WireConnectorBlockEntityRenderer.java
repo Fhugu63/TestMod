@@ -38,18 +38,18 @@ public class WireConnectorBlockEntityRenderer implements BlockEntityRenderer<Wir
             poseStack.scale(0.5F, 0.5F, 0.5F);
             poseStack.mulPose(this.context.getEntityRenderer().cameraOrientation());
             PoseStack.Pose posestack$pose = poseStack.last();
-            VertexConsumer vertexconsumer = multiBufferSource.getBuffer(renderType);
+            /*VertexConsumer vertexconsumer = multiBufferSource.getBuffer(renderType);
             vertex(vertexconsumer, posestack$pose, 15, 0.0F, 0, 0, 1);
             vertex(vertexconsumer, posestack$pose, 15, 1.0F, 0, 1, 1);
             vertex(vertexconsumer, posestack$pose, 15, 1.0F, 1, 1, 0);
-            vertex(vertexconsumer, posestack$pose, 15, 0.0F, 1, 0, 0);
+            vertex(vertexconsumer, posestack$pose, 15, 0.0F, 1, 0, 0);*/
             poseStack.popPose();
             float f = 0;
             float f1 = Mth.sin(Mth.sqrt(f) * (float)Math.PI);
             Vec3 vec3 = new Vec3(
-                    wireConnectorBlockEntity.getBlockPos().getX(),
-                    wireConnectorBlockEntity.getBlockPos().getY() + 1,
-                    wireConnectorBlockEntity.getBlockPos().getZ()
+                    wireConnectorBlockEntity.getBlockPos().getX()+0.5,
+                    wireConnectorBlockEntity.getBlockPos().getY(),
+                    wireConnectorBlockEntity.getBlockPos().getZ()+0.5
             );
             for (EnergyBlockEntity energyBlockEntity : wireConnectorBlockEntity.getConnectedWireConnectors()) {
                 Vec3 vec31 = new Vec3(

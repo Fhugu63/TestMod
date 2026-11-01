@@ -32,6 +32,39 @@ public class WireConnectorBlockEntityRenderer implements BlockEntityRenderer<Wir
     @Override
     public void render(WireConnectorBlockEntity wireConnectorBlockEntity, float v, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int i1) {
         //Player player = entity.getPlayerOwner();
+        
+            poseStack.pushPose();
+            PoseStack pose = poseStack.last();
+            VertexConsumer vertexConsumer = = multiBufferSource.getBuffer(RenderType.lineStrip());
+            
+            Vec3 vec3 = new Vec3(
+                    wireConnectorBlockEntity.getBlockPos().getX(),
+                    wireConnectorBlockEntity.getBlockPos().getY() + 1,
+                    wireConnectorBlockEntity.getBlockPos().getZ()
+            );
+            
+            for (EnergyBlockEntity energyBlockEntity : wireConnectorBlockEntity.getConnectedWireConnectors()) {
+                Vec3 vec31 = new Vec3(
+                        energyBlockEntity.getBlockPos().getX(),
+                        energyBlockEntity.getBlockPos().getY(),
+                        energyBlockEntity.getBlockPos().getZ()
+                );
+                float f2 = (float) (vec3.x - vec31.x);
+                float f3 = (float) (vec3.y - vec31.y);
+                float f4 = (float) (vec3.z - vec31.z);
+                
+                vertexConsumer.addVertex(pose, 0.5f, 0.5f, 0.5f).setColor(-16777216).setNormal(0.5f, 0.5f, 0.5f);
+                vertexConsumer.addVertex(pose, f2+0.5f, f3+0.5f, f4+0.5f).setColor(-16777216).setNormal(0.5f, 0.5f, 0.5f);
+            }
+
+            poseStack.popPose();
+        
+
+    }
+    
+    /*@Override
+    public void render(WireConnectorBlockEntity wireConnectorBlockEntity, float v, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int i1) {
+        //Player player = entity.getPlayerOwner();
         if (true) {
             poseStack.pushPose();
             poseStack.pushPose();
@@ -75,7 +108,7 @@ public class WireConnectorBlockEntityRenderer implements BlockEntityRenderer<Wir
             poseStack.popPose();
         }
 
-    }
+    }*/
 
     private static float fraction(int numerator, int denominator) {
         return (float)numerator / (float)denominator;

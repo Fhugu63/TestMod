@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "": {
+      "model": "testmod:block/wire_connector/wire_connector"
+    },
+    "connected: true": {
+      "model": "testmod:block/wire_connector/connected_wire_connector"
+    }
+  }
+}

@@ -1,8 +1,9 @@
 package com.fhugu63.testmod;
 
-import com.fhugu63.testmod.BlockEntitys.CreativeAccumulatorBlockEntity;
-import com.fhugu63.testmod.BlockEntitys.LampBlockEntity;
-import com.fhugu63.testmod.BlockEntitys.WireConnectorBlockEntity;
+import com.fhugu63.testmod.content.energy.accumulator.CreativeAccumulatorBlockEntity;
+import com.fhugu63.testmod.content.energy.lamp.LampBlockEntity;
+import com.fhugu63.testmod.content.energy.conductor.WireConnectorBlockEntity;
+import com.fhugu63.testmod.content.energy.motor.BasicElectricalMotorBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -14,7 +15,7 @@ public class AllBlockEntitys {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, TestMod.MODID);
 
     public static final Supplier<BlockEntityType<WireConnectorBlockEntity>> WIRE_CONNECTOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
-            "wire_connector_block_entity",
+            "wire_connector_be",
             // The block entity type, created using a builder.
             () -> BlockEntityType.Builder.of(
                             // The supplier to use for constructing the block entity instances.
@@ -28,7 +29,7 @@ public class AllBlockEntitys {
     );
 
     public static final Supplier<BlockEntityType<CreativeAccumulatorBlockEntity>> CREATIVE_ACCUMULATOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
-            "creative_accumulator_block_entity",
+            "creative_accumulator_be",
             // The block entity type, created using a builder.
             () -> BlockEntityType.Builder.of(
                             // The supplier to use for constructing the block entity instances.
@@ -42,7 +43,7 @@ public class AllBlockEntitys {
     );
 
     public static final Supplier<BlockEntityType<LampBlockEntity>> LAMP_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
-            "lamp_block_entity",
+            "lamp_be",
             // The block entity type, created using a builder.
             () -> BlockEntityType.Builder.of(
                             // The supplier to use for constructing the block entity instances.
@@ -50,6 +51,20 @@ public class AllBlockEntitys {
                             // A vararg of blocks that can have this block entity.
                             // This assumes the existence of the referenced blocks as DeferredBlock<Block>s.
                             AllBlocks.LAMP_BLOCK.get()
+                    )
+                    // Build using null; vanilla does some datafixer shenanigans with the parameter that we don't need.
+                    .build(null)
+    );
+
+    public static final Supplier<BlockEntityType<BasicElectricalMotorBlockEntity>> BASIC_ELECTRIC_MOTOR_BE = BLOCK_ENTITY_TYPES.register(
+            "basic_electric_motor_be",
+            // The block entity type, created using a builder.
+            () -> BlockEntityType.Builder.of(
+                            // The supplier to use for constructing the block entity instances.
+                            BasicElectricalMotorBlockEntity::new,
+                            // A vararg of blocks that can have this block entity.
+                            // This assumes the existence of the referenced blocks as DeferredBlock<Block>s.
+                            AllBlocks.BASIC_ELECTRIC_MOTOR.get()
                     )
                     // Build using null; vanilla does some datafixer shenanigans with the parameter that we don't need.
                     .build(null)

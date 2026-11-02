@@ -1,22 +1,17 @@
-package com.fhugu63.testmod.BlockEntitys;
+package com.fhugu63.testmod.content.energy.accumulator;
 
 import com.fhugu63.testmod.AllBlockEntitys;
-import com.fhugu63.testmod.Energy.EnergyBlockEntity;
-import com.fhugu63.testmod.Energy.EnergyNetwork;
+import com.fhugu63.testmod.infrastructure.energy_system.EnergyBlockEntity;
 import com.fhugu63.testmod.TestMod;
+import com.fhugu63.testmod.content.energy.conductor.WireConnectorBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-import net.neoforged.neoforge.items.IItemHandler;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public class CreativeAccumulatorBlockEntity extends EnergyBlockEntity {

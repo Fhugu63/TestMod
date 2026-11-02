@@ -1,6 +1,5 @@
-package com.fhugu63.testmod.Energy;
+package com.fhugu63.testmod.infrastructure.energy_system;
 
-import com.fhugu63.testmod.BlockEntitys.WireConnectorBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 
 public class EnergyBlockEntity extends BlockEntity {
     EnergyNetwork energyNetwork = null;
-    private ArrayList<EnergyBlockEntity> connectedWith = new ArrayList<EnergyBlockEntity>();
+    ArrayList<EnergyBlockEntity> connectedWith = new ArrayList<EnergyBlockEntity>();
     public float gettedEnergy = 0;
 
     public EnergyBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
@@ -41,8 +40,8 @@ public class EnergyBlockEntity extends BlockEntity {
         this.connectedWith.add(connectedTo);
     }
 
-    public void disConnectWireConnector(WireConnectorBlockEntity wireConnectorBlockEntity) {
-        this.connectedWith.remove(wireConnectorBlockEntity);
+    public void disConnectWireConnector(EnergyBlockEntity energyBlockEntity) {
+        this.connectedWith.remove(energyBlockEntity);
     }
 
 }

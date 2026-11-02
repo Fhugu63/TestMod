@@ -1,18 +1,11 @@
-package com.fhugu63.testmod.BlockEntitys;
+package com.fhugu63.testmod.content.energy.conductor;
 
 import com.fhugu63.testmod.AllBlockEntitys;
-import com.fhugu63.testmod.Blocks.WireConnectorBlock;
-import com.fhugu63.testmod.Energy.EnergyBlockEntity;
-import com.fhugu63.testmod.Energy.EnergyNetwork;
+import com.fhugu63.testmod.infrastructure.energy_system.EnergyBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.ArrayList;
 
 public class WireConnectorBlockEntity extends EnergyBlockEntity {
     public WireConnectorBlockEntity(BlockPos pos, BlockState blockState) {
@@ -35,7 +28,29 @@ public class WireConnectorBlockEntity extends EnergyBlockEntity {
         tag.putUUID("value", this.value);
     }*/
 
+    @Override
+    public void connectWireConnector(EnergyBlockEntity connectedTo) {
+        this.getConnectedWireConnectors().add(connectedTo);
+
+        if (!this.getBlockState().getValue(WireConnectorBlock.booleanPropertyConnected)) {
+            BlockState newBlockState = this.getBlockState().setValue(WireConnectorBlock.booleanPropertyConnected, true);
+
+            level.setBlock(this.getBlockPos(), newBlockState, Block.UPDATE_ALL);
+        }
+    }
+
+    @Override
+    public void disConnectWireConnector(EnergyBlockEntity energyBlockEntity) {
+        this.getConnectedWireConnectors().remove(energyBlockEntity);
+
+        if (this.getConnectedWireConnectors().isEmpty()) {
+            level.setBlock(this.getBlockPos(), this.getBlockState().setValue(WireConnectorBlock.booleanPropertyConnected, false), Block.UPDATE_ALL);
+        }
+    }
+
     public static void tick(Level level, BlockPos pos, BlockState state, WireConnectorBlockEntity blockEntity) {
 
     }
+
+
 }

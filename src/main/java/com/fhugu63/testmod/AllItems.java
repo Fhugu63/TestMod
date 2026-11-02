@@ -1,6 +1,6 @@
 package com.fhugu63.testmod;
 
-import com.fhugu63.testmod.Items.CopperWireItem;
+import com.fhugu63.testmod.content.energy.wire.CopperWireItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;

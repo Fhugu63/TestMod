@@ -1,17 +1,11 @@
-package com.fhugu63.testmod.Items;
+package com.fhugu63.testmod.content.energy.wire;
 
-import com.fhugu63.testmod.AllBlockEntitys;
-import com.fhugu63.testmod.BlockEntitys.WireConnectorBlockEntity;
-import com.fhugu63.testmod.Energy.EnergyBlockEntity;
-import com.fhugu63.testmod.Energy.EnergyNetwork;
+import com.fhugu63.testmod.infrastructure.energy_system.EnergyBlockEntity;
+import com.fhugu63.testmod.infrastructure.energy_system.EnergyNetwork;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
@@ -53,7 +47,19 @@ public class CopperWireItem extends Item {
             firstConnect.connectWireConnector(secondConnect);
             secondConnect.connectWireConnector(firstConnect);
 
-            if (!firstConnect.energyNetworkNull()) {
+                if (!firstConnect.energyNetworkNull() && !secondConnect.energyNetworkNull()) {
+                    if (firstConnect.getEnergyNetwork() != secondConnect.getEnergyNetwork()) {
+                        if (firstConnect.getEnergyNetwork().getCountOfConnectedBlocks() >
+                                secondConnect.getEnergyNetwork().getCountOfConnectedBlocks()) {
+                            secondConnect.getEnergyNetwork().changeEnergyNetworkInConnectedBlocks(firstConnect.getEnergyNetwork());
+                        } else if (firstConnect.getEnergyNetwork().getCountOfConnectedBlocks() <
+                                secondConnect.getEnergyNetwork().getCountOfConnectedBlocks()) {
+                            firstConnect.getEnergyNetwork().changeEnergyNetworkInConnectedBlocks(secondConnect.getEnergyNetwork());
+                        } else {
+                            firstConnect.getEnergyNetwork().changeEnergyNetworkInConnectedBlocks(secondConnect.getEnergyNetwork());
+                        }
+                    }
+                } else if (!firstConnect.energyNetworkNull()) {
                 energyNetwork = firstConnect.getEnergyNetwork();
 
                 if (!secondConnect.energyNetworkNull()) {

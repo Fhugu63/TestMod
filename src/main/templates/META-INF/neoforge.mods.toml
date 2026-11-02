@@ -43,6 +43,7 @@ displayName="${mod_name}" #mandatory
 
 # The authors of the mod, displayed in the mod UI (optional)
 authors='''
+
 Code: Fhugu63
 Models, textures, ideas: Cracker_snack
 '''
@@ -86,6 +87,13 @@ config="${mod_id}.mixins.json"
     type="required"
     # This version range declares a minimum of the current minecraft version up to but not including the next major version
     versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="create"
+    type="required"
+    versionRange="[6.0.10,6.1.0)"
     ordering="NONE"
     side="BOTH"
 

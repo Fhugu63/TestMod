@@ -1,19 +1,17 @@
-package com.fhugu63.testmod.Events;
+package com.fhugu63.testmod.infrastructure.event_handlers;
 
 import com.fhugu63.testmod.AllBlockEntitys;
-import com.fhugu63.testmod.AllBlocks;
-import com.fhugu63.testmod.BlockEntitys.BlockEntitysRenderer.WireConnectorBlockEntityRenderer;
-import com.fhugu63.testmod.BlockEntitys.CreativeAccumulatorBlockEntity;
+import com.fhugu63.testmod.content.energy.conductor.WireConnectorBlockEntityRenderer;
+import com.fhugu63.testmod.content.energy.accumulator.CreativeAccumulatorBlockEntity;
 import com.fhugu63.testmod.TestMod;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 
 @EventBusSubscriber(modid = TestMod.MODID)
-public class ModEventBus {
+public class ModEventHandlers {
     @SubscribeEvent  // on the mod event bus
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(

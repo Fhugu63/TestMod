@@ -1,4 +1,4 @@
-package com.fhugu63.testmod.Energy;
+package com.fhugu63.testmod.infrastructure.energy_system;
 
 import java.util.ArrayList;
 
@@ -46,5 +46,9 @@ public class EnergyNetwork {
 
     public float getTotalEnergy() {
         return totalEnergy;
+    }
+
+    public int getCountOfConnectedBlocks() {
+        return energyBlockEntitiesInNetwork.size();
     }
 }

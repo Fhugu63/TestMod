@@ -2,34 +2,31 @@ package com.fhugu63.testmod.content.energy.conductor;
 
 import com.fhugu63.testmod.AllBlockEntitys;
 import com.fhugu63.testmod.infrastructure.energy_system.EnergyBlockEntity;
+import com.fhugu63.testmod.infrastructure.energy_system.IEnergyBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class WireConnectorBlockEntity extends EnergyBlockEntity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class WireConnectorBlockEntity extends EnergyBlockEntity implements IEnergyBlockEntity {
+    String energyNetworkIdName = "networkId";
+    List<WireConnectorBlockEntity> connectedWireConnectors = new ArrayList<>();
+
     public WireConnectorBlockEntity(BlockPos pos, BlockState blockState) {
         super(AllBlockEntitys.WIRE_CONNECTOR_BLOCK_ENTITY.get(), pos, blockState);
     }
 
-    /*// Read values from the passed CompoundTag here.
-    @Override
-    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        // Will default to 0 if absent. See the NBT article for more information.
-
-        this.connectedConnectors.;
+    public List<WireConnectorBlockEntity> getConnectedWireConnectors() {
+        return this.connectedWireConnectors;
     }
 
-    // Save values into the passed CompoundTag here.
-    @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putUUID("value", this.value);
-    }*/
-
-    @Override
-    public void connectWireConnector(EnergyBlockEntity connectedTo) {
+    public void connectWireConnector(WireConnectorBlockEntity connectedTo) {
         this.getConnectedWireConnectors().add(connectedTo);
 
         if (!this.getBlockState().getValue(WireConnectorBlock.booleanPropertyConnected)) {
@@ -39,8 +36,7 @@ public class WireConnectorBlockEntity extends EnergyBlockEntity {
         }
     }
 
-    @Override
-    public void disConnectWireConnector(EnergyBlockEntity energyBlockEntity) {
+    public void disConnectWireConnector(WireConnectorBlockEntity energyBlockEntity) {
         this.getConnectedWireConnectors().remove(energyBlockEntity);
 
         if (this.getConnectedWireConnectors().isEmpty()) {
@@ -52,5 +48,49 @@ public class WireConnectorBlockEntity extends EnergyBlockEntity {
 
     }
 
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
 
+        this.setEnergyNetworkId(tag.getLong(energyNetworkIdName));
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+
+        if (this.haveEnergyNetwork()) {
+            tag.putLong(energyNetworkIdName, this.getEnergyNetworkId());
+        }
+    }
+
+    @Override
+    public boolean haveEnergyNetwork() {
+        return false;
+    }
+
+    @Override
+    public Long getEnergyNetworkId() {
+        return 0L;
+    }
+
+    @Override
+    public void setEnergyNetworkId(Long newEnergyNetworkId) {
+
+    }
+
+    @Override
+    public void tick() {
+
+    }
+
+    @Override
+    public void onPlace() {
+
+    }
+
+    @Override
+    public void onDestroy() {
+
+    }
 }

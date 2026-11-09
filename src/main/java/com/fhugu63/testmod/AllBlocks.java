@@ -1,5 +1,6 @@
 package com.fhugu63.testmod;
 
+import com.fhugu63.testmod.content.energy.kinetic_generator.KineticGeneratorBlock;
 import com.fhugu63.testmod.content.energy.motor.BasicElectricalMotorBlock;
 import com.fhugu63.testmod.content.energy.accumulator.CreativeAccumulatorBlock;
 import com.fhugu63.testmod.content.energy.lamp.LampBlock;
@@ -29,5 +30,10 @@ public class AllBlocks {
     public static final DeferredBlock<BasicElectricalMotorBlock> BASIC_ELECTRIC_MOTOR = BLOCKS.register(
             "basic_electric_motor",
             () -> new BasicElectricalMotorBlock(BlockBehaviour.Properties.of())
+    );
+
+    public static final DeferredBlock<KineticGeneratorBlock> KINETIC_GENERATOR = BLOCKS.register(
+            "kinetic_generator",
+            () -> new KineticGeneratorBlock(BlockBehaviour.Properties.of())
     );
 }

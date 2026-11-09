@@ -40,4 +40,8 @@ public class AllItems {
     public static final DeferredItem<BlockItem> LAMP_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
             AllBlocks.LAMP_BLOCK
     );
+
+    public static final DeferredItem<BlockItem> BASIC_ELECTRIC_MOTOR_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
+            AllBlocks.BASIC_ELECTRIC_MOTOR
+    );
 }

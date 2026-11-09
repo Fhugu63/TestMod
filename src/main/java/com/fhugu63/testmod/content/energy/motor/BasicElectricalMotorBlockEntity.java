@@ -1,94 +1,191 @@
 package com.fhugu63.testmod.content.energy.motor;
 
 import com.fhugu63.testmod.AllBlockEntitys;
-import com.fhugu63.testmod.AllBlocks;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
-import com.simibubi.create.content.kinetics.motor.KineticScrollValueBehaviour;
-import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
+import com.fhugu63.testmod.content.energy.conductor.WireConnectorBlockEntity;
+import com.fhugu63.testmod.infrastructure.EnergyNetworksContainer;
+import com.fhugu63.testmod.infrastructure.codec_record.EnergyNetworkRecord;
+import com.fhugu63.testmod.infrastructure.energy_system.ElectricMotorBlockEntity;
+import com.fhugu63.testmod.infrastructure.energy_system.EnergyNetwork;
+import com.fhugu63.testmod.infrastructure.energy_system.IEnergyBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
-import com.simibubi.create.foundation.utility.CreateLang;
-import dev.engine_room.flywheel.lib.transform.TransformStack;
-import net.createmod.catnip.math.AngleHelper;
-import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
-public class BasicElectricalMotorBlockEntity extends GeneratingKineticBlockEntity {
-    public static final int DEFAULT_SPEED = 16;
+public class BasicElectricalMotorBlockEntity extends ElectricMotorBlockEntity implements IEnergyBlockEntity {
+    public static final int DEFAULT_SPEED = 32;
     public static final int MAX_SPEED = 256;
 
+    // per tick
+    public static final float requiresEnergy = 10;
+
     public ScrollValueBehaviour generatedSpeed;
+
+    int nowSpeed = 0;
 
     public BasicElectricalMotorBlockEntity(BlockPos pos, BlockState state) {
         super(AllBlockEntitys.BASIC_ELECTRIC_MOTOR_BE.get(), pos, state);
     }
 
     @Override
+    public void tick() {
+        super.tick();
+
+        if (this.haveEnergyNetwork()) {
+            EnergyNetwork energyNetwork = EnergyNetworksContainer.getEnergyNetwork(this.getEnergyNetworkId());
+            energyNetwork.getEnergy(requiresEnergy);
+
+            nowSpeed = DEFAULT_SPEED;
+            this.applyNewSpeed(nowSpeed, nowSpeed);
+        } else {
+            this.applyNewSpeed(0, 0);
+        }
+    }
+
+    @Override
     public float getGeneratedSpeed() {
-        /*if (!AllBlocks.BASIC_ELECTRIC_MOTOR.get().has(getBlockState()))
-            return 0;*/
-        return convertToDirection(generatedSpeed.getValue(), getBlockState().getValue(BasicElectricalMotorBlock.FACING));
+        return nowSpeed;
     }
 
-    @Override
-    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        super.addBehaviours(behaviours);
-        int max = MAX_SPEED;
-        generatedSpeed = new KineticScrollValueBehaviour(CreateLang.translateDirect("kinetics.creative_motor.rotation_speed"),
-                this, new MotorValueBox());
-        generatedSpeed.between(-max, max);
-        generatedSpeed.value = DEFAULT_SPEED;
-        generatedSpeed.withCallback(i -> this.updateGeneratedRotation());
-        behaviours.add(generatedSpeed);
+
+    public void onPlace() {
+        super.onLoad();
+
+        if (!this.level.isClientSide()) {
+            Vec3 vec3BlockPos = new Vec3(
+                    this.getBlockPos().getX(),
+                    this.getBlockPos().getY(),
+                    this.getBlockPos().getZ()
+            );
+
+            AABB aabb = AABB.ofSize(vec3BlockPos, 6, 6, 6);
+
+            Stream<BlockPos> blockPosStream = BlockPos.betweenClosedStream(aabb);
+            List<BlockPos> blockPosList = blockPosStream.toList();
+
+            //Stream<BlockState> blockStates = level.getBlockStates(aabb);
+            System.out.println(aabb);
+
+            int x = (int) aabb.minX;
+            int y = (int) aabb.minY;
+            int z = (int) aabb.minZ;
+
+            while (true) {
+                BlockPos blockPos = new BlockPos(x, y, z);
+                BlockEntity blockEntity = this.level.getBlockEntity(blockPos);
+                System.out.println(blockEntity);
+                System.out.println(blockPos);
+                if (blockEntity != null && blockEntity.getClass() == WireConnectorBlockEntity.class && !blockEntity.isRemoved() && ((WireConnectorBlockEntity) blockEntity).haveEnergyNetwork()) {
+                    WireConnectorBlockEntity wireConnectorBlockEntity = (WireConnectorBlockEntity) blockEntity;
+                    EnergyNetwork energyNetwork = EnergyNetworksContainer.getEnergyNetwork(wireConnectorBlockEntity.getEnergyNetworkId());
+
+                    System.out.println(energyNetwork);
+                    this.setEnergyNetworkId(energyNetwork.getId());
+
+                    ArrayList<Float> floatList = new ArrayList<>();
+
+                    floatList.add(energyNetwork.getTotalEnergy());
+                    floatList.add(energyNetwork.getMaxCanContainsEnergy());
+
+                    floatList.add(energyNetwork.getR());
+                    floatList.add(energyNetwork.getG());
+                    floatList.add(energyNetwork.getB());
+
+                    PacketDistributor.sendToServer(
+                            new EnergyNetworkRecord(floatList, energyNetwork.getId(),
+                                    energyNetwork.getEnergyBlocksPoses(), this.getBlockPos(), this.getBlockPos())
+                    );
+
+                    break;
+                }
+                if (aabb.maxX == x && aabb.maxY == y && aabb.maxZ == z) {
+                    break;
+                }
+
+                if (aabb.maxX == x && aabb.maxZ == z) {
+                    x = (int) aabb.minX;
+                    z = (int) aabb.minZ;
+                    y++;
+                }
+
+                if (aabb.maxX == x) {
+                    x = (int) aabb.minX;
+                    z++;
+                }
+
+                x++;
+
+                System.out.println("x: " + x);
+                System.out.println("y: " + y);
+                System.out.println("z: " + z);
+            }
+
+            //System.out.println(ene);
+        }
     }
 
-    @Override
-    public void initialize() {
-        super.initialize();
-        if (!hasSource() || getGeneratedSpeed() > getTheoreticalSpeed())
-            updateGeneratedRotation();
-    }
+    /*public void onPlace() {
+        if (!this.level.isClientSide()) {
+            Vec3 vec3BlockPos = new Vec3(
+                    this.getBlockPos().getX(),
+                    this.getBlockPos().getY(),
+                    this.getBlockPos().getZ()
+            );
 
-    static class MotorValueBox extends ValueBoxTransform.Sided {
-        @Override
-        protected Vec3 getSouthLocation() {
-            return VecHelper.voxelSpace(8, 8, 12.5);
+            AABB aabb = AABB.ofSize(vec3BlockPos, 6, 6, 6);
+
+            Stream<BlockPos> blockPosStream = BlockPos.betweenClosedStream(aabb);
+            List<BlockPos> blockPosList = blockPosStream.toList();
+
+            //Stream<BlockState> blockStates = level.getBlockStates(aabb);
+            System.out.println(aabb);
+
+            int x = (int) aabb.minX;
+            int y = (int) aabb.minY;
+            int z = (int) aabb.minZ;
+
+            while (true) {
+                BlockEntity blockEntity = this.level.getBlockEntity(new BlockPos(x, y, z));
+                System.out.println(blockEntity);
+                if (blockEntity != null && blockEntity.getClass() == WireConnectorBlockEntity.class) {
+                    WireConnectorBlockEntity wireConnectorBlockEntity = (WireConnectorBlockEntity) blockEntity;
+                    EnergyNetwork energyNetwork = EnergyNetworksContainer.getEnergyNetwork(wireConnectorBlockEntity.getEnergyNetworkId());
+
+                    System.out.println(energyNetwork);
+                    this.setEnergyNetworkId(energyNetwork.getId());
+
+                    break;
+                }
+                if (aabb.maxX == x && aabb.maxY == y && aabb.maxZ == z) {
+                    break;
+                }
+
+                if (aabb.maxX == x && aabb.maxZ == z) {
+                    x = (int) aabb.minX;
+                    z = (int) aabb.minZ;
+                    y++;
+                }
+
+                if (aabb.maxX == x) {
+                    x = (int) aabb.minX;
+                    z++;
+                }
+
+                x++;
+
+                System.out.println("x: " + x);
+                System.out.println("y: " + y);
+                System.out.println("z: " + z);
+            }
+
+            //System.out.println(this.getEnergyNetwork());
         }
-
-        @Override
-        public Vec3 getLocalOffset(LevelAccessor level, BlockPos pos, BlockState state) {
-            Direction facing = state.getValue(BasicElectricalMotorBlock.FACING);
-            return super.getLocalOffset(level, pos, state).add(Vec3.atLowerCornerOf(facing.getNormal())
-                    .scale(-1 / 16f));
-        }
-
-        @Override
-        public void rotate(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
-            super.rotate(level, pos, state, ms);
-            Direction facing = state.getValue(BasicElectricalMotorBlock.FACING);
-            if (facing.getAxis() == Direction.Axis.Y)
-                return;
-            if (getSide() != Direction.UP)
-                return;
-            TransformStack.of(ms)
-                    .rotateZDegrees(-AngleHelper.horizontalAngle(facing) + 180);
-        }
-
-        @Override
-        protected boolean isSideActive(BlockState state, Direction direction) {
-            Direction facing = state.getValue(BasicElectricalMotorBlock.FACING);
-            if (facing.getAxis() != Direction.Axis.Y && direction == Direction.DOWN)
-                return false;
-            return direction.getAxis() != facing.getAxis();
-        }
-
-    }
+    }*/
 }

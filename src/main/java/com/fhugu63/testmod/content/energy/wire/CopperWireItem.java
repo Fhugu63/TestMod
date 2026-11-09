@@ -1,13 +1,21 @@
 package com.fhugu63.testmod.content.energy.wire;
 
+import com.fhugu63.testmod.infrastructure.EnergyNetworksContainer;
+import com.fhugu63.testmod.infrastructure.codec_record.ChangeIdInBlockInNetwork;
+import com.fhugu63.testmod.infrastructure.codec_record.EnergyNetworkRecord;
 import com.fhugu63.testmod.infrastructure.energy_system.EnergyBlockEntity;
 import com.fhugu63.testmod.infrastructure.energy_system.EnergyNetwork;
+import com.fhugu63.testmod.infrastructure.energy_system.IEnergyBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class CopperWireItem extends Item {
     EnergyBlockEntity firstConnect;
@@ -24,77 +32,64 @@ public class CopperWireItem extends Item {
         BlockPos clickedBlockPos = context.getClickedPos();
         Level level = context.getLevel();
         EnergyNetwork energyNetwork = null;
-        System.out.println("clicked!");
-        System.out.println(level.getBlockEntity(clickedBlockPos));
 
         if (level.getBlockEntity(clickedBlockPos) == null) return InteractionResult.PASS;
         if (level.getBlockEntity(clickedBlockPos).getClass() == EnergyBlockEntity.class) return InteractionResult.PASS;
 
         EnergyBlockEntity wireConnector = (EnergyBlockEntity) level.getBlockEntity(clickedBlockPos);
-        System.out.println("thats needed block!");
 
         assert wireConnector != null;
 
         if (firstConnect == null) {
-            context.getPlayer().displayClientMessage(Component.translatable("Первый объект выбран"), true);
-
             firstConnect = wireConnector;
-        } else {
-            context.getPlayer().displayClientMessage(Component.translatable("Второй объект выбран"), true);
 
+            context.getPlayer().displayClientMessage(Component.translatable("Первый объеёт выбран!"), true);
+        } else {
+            context.getPlayer().displayClientMessage(Component.translatable("Второй объеёт выбран!"), true);
             secondConnect = wireConnector;
 
-            firstConnect.connectWireConnector(secondConnect);
-            secondConnect.connectWireConnector(firstConnect);
+            EnergyNetwork firstEnergyNetwork = EnergyNetworksContainer.getEnergyNetwork(firstConnect.getEnergyNetworkId());
+            EnergyNetwork secondEnergyNetwork = EnergyNetworksContainer.getEnergyNetwork(secondConnect.getEnergyNetworkId());
 
-                if (!firstConnect.energyNetworkNull() && !secondConnect.energyNetworkNull()) {
-                    if (firstConnect.getEnergyNetwork() != secondConnect.getEnergyNetwork()) {
-                        if (firstConnect.getEnergyNetwork().getCountOfConnectedBlocks() >
-                                secondConnect.getEnergyNetwork().getCountOfConnectedBlocks()) {
-                            secondConnect.getEnergyNetwork().changeEnergyNetworkInConnectedBlocks(firstConnect.getEnergyNetwork());
-                        } else if (firstConnect.getEnergyNetwork().getCountOfConnectedBlocks() <
-                                secondConnect.getEnergyNetwork().getCountOfConnectedBlocks()) {
-                            firstConnect.getEnergyNetwork().changeEnergyNetworkInConnectedBlocks(secondConnect.getEnergyNetwork());
-                        } else {
-                            firstConnect.getEnergyNetwork().changeEnergyNetworkInConnectedBlocks(secondConnect.getEnergyNetwork());
-                        }
-                    }
-                } else if (!firstConnect.energyNetworkNull()) {
-                energyNetwork = firstConnect.getEnergyNetwork();
+            if (firstConnect.haveEnergyNetwork() && !secondConnect.haveEnergyNetwork()) {
+                energyNetwork = firstEnergyNetwork;
 
-                if (!secondConnect.energyNetworkNull()) {
-                    energyNetwork.giveEnergy(secondConnect.getEnergyNetwork().getTotalEnergy());
+                secondConnect.setEnergyNetworkId(firstEnergyNetwork.getId());
+            } else if (!firstConnect.haveEnergyNetwork() && secondConnect.haveEnergyNetwork()) {
+                energyNetwork = secondEnergyNetwork;
 
-                    secondConnect.getEnergyNetwork().changeEnergyNetworkInConnectedBlocks(energyNetwork);
-                } else {
-                    secondConnect.setEnergyNetwork(energyNetwork);
-                    energyNetwork.addBlockEntityToNetwork(secondConnect);
-                }
-            } else if (!secondConnect.energyNetworkNull()) {
-                energyNetwork = secondConnect.getEnergyNetwork();
+                firstConnect.setEnergyNetworkId(secondEnergyNetwork.getId());
+            } else if (firstConnect.haveEnergyNetwork() && secondConnect.haveEnergyNetwork()) {
+                energyNetwork = firstEnergyNetwork;
 
-                if (!firstConnect.energyNetworkNull()) {
-                    energyNetwork.giveEnergy(firstConnect.getEnergyNetwork().getTotalEnergy());
+                secondEnergyNetwork.changeEnergyNetworkIdInConnectedBlocks(energyNetwork.getId(), context.getLevel());
+                secondConnect.setEnergyNetworkId(firstEnergyNetwork.getId());
 
-                    firstConnect.getEnergyNetwork().changeEnergyNetworkInConnectedBlocks(energyNetwork);
-                } else {
-                    firstConnect.setEnergyNetwork(energyNetwork);
-                    energyNetwork.addBlockEntityToNetwork(firstConnect);
-                }
+                EnergyNetworksContainer.removeEnergyNetwork(secondEnergyNetwork.getId());
+
+                PacketDistributor.sendToServer(new ChangeIdInBlockInNetwork(secondEnergyNetwork.getId(), energyNetwork.getId()));
             } else {
-                energyNetwork = new EnergyNetwork();
-
-                firstConnect.setEnergyNetwork(energyNetwork);
-                secondConnect.setEnergyNetwork(energyNetwork);
-
-                energyNetwork.addBlockEntityToNetwork(firstConnect);
-                energyNetwork.addBlockEntityToNetwork(secondConnect);
+                energyNetwork = EnergyNetworksContainer.createEnergyNetwork();
             }
+
+            context.getPlayer().displayClientMessage(Component.translatable("Успешно соеденено!"), true);
+
+            ArrayList<Float> floatList = new ArrayList<>();
+
+            floatList.add(energyNetwork.getTotalEnergy());
+            floatList.add(energyNetwork.getMaxCanContainsEnergy());
+
+            floatList.add(energyNetwork.getR());
+            floatList.add(energyNetwork.getG());
+            floatList.add(energyNetwork.getB());
+
+            PacketDistributor.sendToServer(
+                    new EnergyNetworkRecord(floatList, energyNetwork.getId(),
+                            energyNetwork.getEnergyBlocksPoses(), firstConnect.getBlockPos(), secondConnect.getBlockPos())
+            );
 
             firstConnect = null;
             secondConnect = null;
-
-            context.getPlayer().displayClientMessage(Component.translatable("Успешно соеденено!"), true);
         }
 
         return InteractionResult.PASS;

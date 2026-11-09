@@ -1,9 +1,11 @@
 package com.fhugu63.testmod.content.energy.accumulator;
 
 import com.fhugu63.testmod.AllBlockEntitys;
+import com.fhugu63.testmod.infrastructure.EnergyNetworksContainer;
 import com.fhugu63.testmod.infrastructure.energy_system.EnergyBlockEntity;
 import com.fhugu63.testmod.TestMod;
 import com.fhugu63.testmod.content.energy.conductor.WireConnectorBlockEntity;
+import com.fhugu63.testmod.infrastructure.energy_system.EnergyNetwork;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -39,8 +41,9 @@ public class CreativeAccumulatorBlockEntity extends EnergyBlockEntity {
     }*/
 
     public static void tick(Level level, BlockPos pos, BlockState state, CreativeAccumulatorBlockEntity blockEntity) {
-        if (!blockEntity.energyNetworkNull()) {
-            blockEntity.getEnergyNetwork().giveEnergy(200);
+        if (blockEntity.haveEnergyNetwork()) {
+            EnergyNetwork energyNetwork = EnergyNetworksContainer.getEnergyNetwork(blockEntity.getEnergyNetworkId());
+            energyNetwork.giveEnergy(200);
         }
     }
 }

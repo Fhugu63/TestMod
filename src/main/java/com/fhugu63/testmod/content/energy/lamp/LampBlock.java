@@ -1,7 +1,10 @@
 package com.fhugu63.testmod.content.energy.lamp;
 
 import com.fhugu63.testmod.AllBlockEntitys;
+import com.fhugu63.testmod.infrastructure.EnergyNetworksContainer;
 import com.fhugu63.testmod.infrastructure.energy_system.EnergyBlockEntity;
+import com.fhugu63.testmod.infrastructure.energy_system.EnergyNetwork;
+import com.fhugu63.testmod.infrastructure.energy_system.IEnergyBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -64,17 +67,18 @@ public class LampBlock extends TransparentBlock implements EntityBlock {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        EnergyBlockEntity energyBlockEntity = (EnergyBlockEntity) level.getBlockEntity(pos);
+        /*EnergyBlockEntity energyBlockEntity = (EnergyBlockEntity) level.getBlockEntity(pos);
 
-        if (!energyBlockEntity.energyNetworkNull()) {
-            energyBlockEntity.getEnergyNetwork().removeBlockEntityFromNetwork(energyBlockEntity);
+        if (energyBlockEntity.haveEnergyNetwork()) {
+            EnergyNetwork energyNetwork = EnergyNetworksContainer.getEnergyNetwork(energyBlockEntity.getEnergyNetworkId());
+            energyNetwork.removeBlockEntityFromNetwork(energyBlockEntity);
         }
 
-        for (EnergyBlockEntity connectedEnergyBlockEntity : energyBlockEntity.getConnectedWireConnectors()) {
+        for (IEnergyBlockEntity connectedEnergyBlockEntity : energyBlockEntity.getConnectedWireConnectors()) {
             connectedEnergyBlockEntity.disConnectWireConnector(energyBlockEntity);
         }
 
-        super.onRemove(state, level, pos, newState, movedByPiston);
+        super.onRemove(state, level, pos, newState, movedByPiston);*/
     }
 
 

@@ -15,10 +15,10 @@ public class LampBlockEntity extends EnergyBlockEntity {
 
 
     public static void tick(Level level, BlockPos pos, BlockState state, LampBlockEntity blockEntity) {
-        if (blockEntity.getEnergyNetwork() != null) {
+        /*if (blockEntity.getEnergyNetwork() != null) {
             blockEntity.gettedEnergy = blockEntity.getEnergyNetwork().getEnergy(100);
             //System.out.println(blockEntity.gettedEnergy);
             //System.out.println(blockEntity.getEnergyNetwork().getTotalEnergy());
-        }
+        }*/
     }
 }

@@ -1,6 +1,7 @@
 package com.fhugu63.testmod;
 
 import com.fhugu63.testmod.content.energy.accumulator.CreativeAccumulatorBlockEntity;
+import com.fhugu63.testmod.content.energy.kinetic_generator.KineticGeneratorBlockEntity;
 import com.fhugu63.testmod.content.energy.lamp.LampBlockEntity;
 import com.fhugu63.testmod.content.energy.conductor.WireConnectorBlockEntity;
 import com.fhugu63.testmod.content.energy.motor.BasicElectricalMotorBlockEntity;
@@ -65,6 +66,20 @@ public class AllBlockEntitys {
                             // A vararg of blocks that can have this block entity.
                             // This assumes the existence of the referenced blocks as DeferredBlock<Block>s.
                             AllBlocks.BASIC_ELECTRIC_MOTOR.get()
+                    )
+                    // Build using null; vanilla does some datafixer shenanigans with the parameter that we don't need.
+                    .build(null)
+    );
+
+    public static final Supplier<BlockEntityType<KineticGeneratorBlockEntity>> KINETIC_GENERATOR_BE = BLOCK_ENTITY_TYPES.register(
+            "kinetic_generator_be",
+            // The block entity type, created using a builder.
+            () -> BlockEntityType.Builder.of(
+                            // The supplier to use for constructing the block entity instances.
+                            KineticGeneratorBlockEntity::new,
+                            // A vararg of blocks that can have this block entity.
+                            // This assumes the existence of the referenced blocks as DeferredBlock<Block>s.
+                            AllBlocks.KINETIC_GENERATOR.get()
                     )
                     // Build using null; vanilla does some datafixer shenanigans with the parameter that we don't need.
                     .build(null)

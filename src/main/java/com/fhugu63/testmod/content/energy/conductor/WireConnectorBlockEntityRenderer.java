@@ -1,13 +1,20 @@
 package com.fhugu63.testmod.content.energy.conductor;
 
+import com.fhugu63.testmod.TestMod;
+import com.fhugu63.testmod.infrastructure.EnergyNetworksContainer;
 import com.fhugu63.testmod.infrastructure.energy_system.EnergyBlockEntity;
+import com.fhugu63.testmod.infrastructure.energy_system.EnergyNetwork;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.TheEndPortalRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -25,17 +32,18 @@ public class WireConnectorBlockEntityRenderer implements BlockEntityRenderer<Wir
 
         PoseStack.Pose pose = poseStack.last();
         VertexConsumer vertexConsumer = multiBufferSource.getBuffer(renderType);
+        EnergyNetwork energyNetwork = EnergyNetworksContainer.getEnergyNetwork(wireConnectorBlockEntity.getEnergyNetworkId());
 
         Vec3 vec3 = new Vec3(
                 wireConnectorBlockEntity.getBlockPos().getX()-0.5,
                 wireConnectorBlockEntity.getBlockPos().getY()-0.5,
                 wireConnectorBlockEntity.getBlockPos().getZ()-0.5
         );
-        for (EnergyBlockEntity energyBlockEntity : wireConnectorBlockEntity.getConnectedWireConnectors()) {
+        for (WireConnectorBlockEntity wireConnector : wireConnectorBlockEntity.getConnectedWireConnectors()) {
             Vec3 vec31 = new Vec3(
-                    energyBlockEntity.getBlockPos().getX(),
-                    energyBlockEntity.getBlockPos().getY(),
-                    energyBlockEntity.getBlockPos().getZ()
+                    wireConnector.getBlockPos().getX(),
+                    wireConnector.getBlockPos().getY(),
+                    wireConnector.getBlockPos().getZ()
             );
 
             float rx = (float) (vec31.x - vec3.x);
@@ -47,6 +55,35 @@ public class WireConnectorBlockEntityRenderer implements BlockEntityRenderer<Wir
             vertexConsumer.addVertex(pose, 0.5f, 0.5f, 0.5f)
                     .setColor(-16777216).setNormal(pose, 0.5f, 1f, 0.5f);
         }
+
+        vertexConsumer = multiBufferSource.getBuffer(RenderType.lightning());
+
+        /*vertexConsumer.addVertex(pose, 0f, 0f, 0f).setColor(1f, 1f, 1f, 1f).setNormal(pose, 0f, 0f, 0f);
+        vertexConsumer.addVertex(pose, 1f, 0f, 0f).setColor(1f, 1f, 1f, 1f).setNormal(pose, 0f, 0f, 0f);;
+        vertexConsumer.addVertex(pose, 1f, 0f, 1f).setColor(1f, 1f, 1f, 1f).setNormal(pose, 0f, 0f, 0f);;
+        vertexConsumer.addVertex(pose, 0f, 0f, 1f).setColor(1f, 1f, 1f, 1f).setNormal(pose, 0f, 0f, 0f);;
+
+        vertexConsumer.addVertex(pose, 1f, 1f, 1f).setColor(1f, 1f, 1f, 1f).setNormal(pose, 0f, 0f, 0f);;
+        vertexConsumer.addVertex(pose, 1f, 1f, 0f).setColor(1f, 1f, 1f, 1f).setNormal(pose, 0f, 0f, 0f);;
+        vertexConsumer.addVertex(pose, 1f, 0f, 1f).setColor(1f, 1f, 1f, 1f).setNormal(pose, 0f, 0f, 0f);;
+        vertexConsumer.addVertex(pose, 1f, 0f, 0f).setColor(1f, 1f, 1f, 1f).setNormal(pose, 0f, 0f, 0f);;*/
+
+        if (wireConnectorBlockEntity.haveEnergyNetwork() && energyNetwork != null) {
+            vertexConsumer.addVertex(pose, 0f, 1f, 0f)
+                    .setColor(energyNetwork.r, energyNetwork.g, energyNetwork.b, 1)
+                    .setNormal(pose, 0f, 0f, 0f).setUv(0, 0);
+            vertexConsumer.addVertex(pose, 0f, 1f, 1f)
+                    .setColor(energyNetwork.r, energyNetwork.g, energyNetwork.b, 1)
+                    .setNormal(pose, 0f, 0f, 0f).setUv(0, 0);
+            vertexConsumer.addVertex(pose, 1f, 1f, 1f)
+                    .setColor(energyNetwork.r, energyNetwork.g, energyNetwork.b, 1)
+                    .setNormal(pose, 0f, 0f, 0f).setUv(0, 0);
+            vertexConsumer.addVertex(pose, 1f, 1f, 0f)
+                    .setColor(energyNetwork.r, energyNetwork.g, energyNetwork.b, 1)
+                    .setNormal(pose, 0f, 0f, 0f).setUv(0, 0);
+        }
+
+
 
         poseStack.popPose();
     }

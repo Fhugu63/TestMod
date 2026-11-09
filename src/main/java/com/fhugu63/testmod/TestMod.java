@@ -21,6 +21,8 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.Random;
+
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(TestMod.MODID)
 public class TestMod {
@@ -30,7 +32,7 @@ public class TestMod {
     public static final Logger LOGGER = LogUtils.getLogger();
     // Create a Deferred Register to hold Blocks which will all be registered under the "testmod" namespace
 
-
+    public static Random random = new Random();
 
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "testmod" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
@@ -50,6 +52,11 @@ public class TestMod {
             .icon(() -> AllItems.GREEN_GUMMY_BEAR.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(AllItems.GREEN_GUMMY_BEAR.get());// Add the example item to the tab. For your own tabs, this method is preferred over the event
+                output.accept(AllItems.BASIC_ELECTRIC_MOTOR_BLOCK_ITEM.get());
+                output.accept(AllItems.COPPER_WIRE_ITEM.get());
+                output.accept(AllItems.CREATIVE_ACCUMULATOR_BLOCK_ITEM.get());
+                output.accept(AllItems.LAMP_BLOCK_ITEM.get());
+                output.accept(AllItems.WIRE_CONNECTOR_BLOCK_ITEM.get());
             }).build());
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.

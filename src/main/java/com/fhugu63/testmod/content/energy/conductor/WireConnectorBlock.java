@@ -60,6 +60,4 @@ public class WireConnectorBlock extends EnergyBlock implements EntityBlock {
         // this is where the properties are actually added to the state
         pBuilder.add(connectedProperty);
     }
-
-
 }

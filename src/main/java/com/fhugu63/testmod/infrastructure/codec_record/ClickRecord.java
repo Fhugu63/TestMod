@@ -15,8 +15,7 @@ public record ClickRecord(BlockPos blockPos) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<ClickRecord> TYPE =
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(TestMod.MODID, "click_packet"));
-    static Color color = new Color(1f, 1f, 1f);
-    //public static final Codec<EnergyNetwork> energyNetworkCodec = RecordCodecBuilder.f
+
     public static final StreamCodec<ByteBuf, ClickRecord> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC,
             ClickRecord::blockPos,

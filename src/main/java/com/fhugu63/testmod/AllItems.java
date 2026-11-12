@@ -24,8 +24,8 @@ public class AllItems {
                     )
     );
 
-    public static final DeferredItem<CopperWireItem> COPPER_WIRE_ITEM = ITEMS.register(
-            "copper_wire_item",
+    public static final DeferredItem<CopperWireItem> COPPER_WIRE = ITEMS.register(
+            "copper_wire",
             () -> new CopperWireItem(new Item.Properties())
     );
 

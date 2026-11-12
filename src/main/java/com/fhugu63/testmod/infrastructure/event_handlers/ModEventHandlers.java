@@ -7,6 +7,7 @@ import com.fhugu63.testmod.TestMod;
 import com.fhugu63.testmod.content.energy.motor.BasicElectriMotorRenderer;
 import com.fhugu63.testmod.infrastructure.codec_record.ChangeIdInBlockInNetwork;
 import com.fhugu63.testmod.infrastructure.codec_record.ClickRecord;
+import com.fhugu63.testmod.infrastructure.codec_record.ConnectWireConnectorsRecord;
 import com.fhugu63.testmod.infrastructure.codec_record.EnergyNetworkRecord;
 import com.fhugu63.testmod.infrastructure.network.ClientHandleGetENId;
 import com.fhugu63.testmod.infrastructure.network.ServerHandleGetENId;
@@ -74,6 +75,24 @@ public class ModEventHandlers {
                 new DirectionalPayloadHandler<>(
                         ClientHandleGetENId::handleDataChangeIdInNetworkOnMain,
                         ServerHandleGetENId::handleDataChangeIdInNetworkOnMain
+                )
+        );
+
+        registrar.playBidirectional(
+                ClickRecord.TYPE,
+                ClickRecord.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        ClientHandleGetENId::handleClickOnWireConnector,
+                        ServerHandleGetENId::handleClickOnWireConnector
+                )
+        );
+
+        registrar.playBidirectional(
+                ConnectWireConnectorsRecord.TYPE,
+                ConnectWireConnectorsRecord.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        ClientHandleGetENId::handleConnectWireConnectors,
+                        ServerHandleGetENId::handleConnectWireConnectors
                 )
         );
     }

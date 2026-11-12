@@ -53,7 +53,7 @@ public class TestMod {
             .displayItems((parameters, output) -> {
                 output.accept(AllItems.GREEN_GUMMY_BEAR.get());// Add the example item to the tab. For your own tabs, this method is preferred over the event
                 output.accept(AllItems.BASIC_ELECTRIC_MOTOR_BLOCK_ITEM.get());
-                output.accept(AllItems.COPPER_WIRE_ITEM.get());
+                output.accept(AllItems.COPPER_WIRE.get());
                 output.accept(AllItems.CREATIVE_ACCUMULATOR_BLOCK_ITEM.get());
                 output.accept(AllItems.LAMP_BLOCK_ITEM.get());
                 output.accept(AllItems.WIRE_CONNECTOR_BLOCK_ITEM.get());

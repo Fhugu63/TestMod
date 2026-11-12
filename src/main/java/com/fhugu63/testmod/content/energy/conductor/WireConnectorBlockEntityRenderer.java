@@ -32,7 +32,7 @@ public class WireConnectorBlockEntityRenderer implements BlockEntityRenderer<Wir
 
         PoseStack.Pose pose = poseStack.last();
         VertexConsumer vertexConsumer = multiBufferSource.getBuffer(renderType);
-        EnergyNetwork energyNetwork = EnergyNetworksContainer.getEnergyNetwork(wireConnectorBlockEntity.getEnergyNetworkId());
+        EnergyNetwork.clientEnergyNetwork energyNetwork = EnergyNetworksContainer.clientEnergyNetworksContainer.getEnergyNetwork(wireConnectorBlockEntity.getEnergyNetworkId());
 
         Vec3 vec3 = new Vec3(
                 wireConnectorBlockEntity.getBlockPos().getX()-0.5,
@@ -70,20 +70,18 @@ public class WireConnectorBlockEntityRenderer implements BlockEntityRenderer<Wir
 
         if (wireConnectorBlockEntity.haveEnergyNetwork() && energyNetwork != null) {
             vertexConsumer.addVertex(pose, 0f, 1f, 0f)
-                    .setColor(energyNetwork.r, energyNetwork.g, energyNetwork.b, 1)
+                    .setColor(energyNetwork.getR(), energyNetwork.getG(), energyNetwork.getB(), 1)
                     .setNormal(pose, 0f, 0f, 0f).setUv(0, 0);
             vertexConsumer.addVertex(pose, 0f, 1f, 1f)
-                    .setColor(energyNetwork.r, energyNetwork.g, energyNetwork.b, 1)
+                    .setColor(energyNetwork.getR(), energyNetwork.getG(), energyNetwork.getB(), 1)
                     .setNormal(pose, 0f, 0f, 0f).setUv(0, 0);
             vertexConsumer.addVertex(pose, 1f, 1f, 1f)
-                    .setColor(energyNetwork.r, energyNetwork.g, energyNetwork.b, 1)
+                    .setColor(energyNetwork.getR(), energyNetwork.getG(), energyNetwork.getB(), 1)
                     .setNormal(pose, 0f, 0f, 0f).setUv(0, 0);
             vertexConsumer.addVertex(pose, 1f, 1f, 0f)
-                    .setColor(energyNetwork.r, energyNetwork.g, energyNetwork.b, 1)
+                    .setColor(energyNetwork.getR(), energyNetwork.getG(), energyNetwork.getB(), 1)
                     .setNormal(pose, 0f, 0f, 0f).setUv(0, 0);
         }
-
-
 
         poseStack.popPose();
     }
@@ -120,7 +118,7 @@ public class WireConnectorBlockEntityRenderer implements BlockEntityRenderer<Wir
 
                 VertexConsumer vertexconsumer1 = multiBufferSource.getBuffer(RenderType.lineStrip());
                 PoseStack.Pose posestack$pose1 = poseStack.last();
-                int g = 16;
+                int getG() = 16;
 
                 for (int j = 0; j <= 16; ++j) {
                     //stringVertex(f2, f3, f4, vertexconsumer1, posestack$pose1, fraction(j, 16), fraction(j + 1, 16));

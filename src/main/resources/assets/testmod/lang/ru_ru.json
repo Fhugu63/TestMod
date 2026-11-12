@@ -1,5 +1,9 @@
 {
   "item.testmod.green_gummy_bear": "Зелёный мармеладный мишка",
+  "item.testmod.copper_wire": "Медный провод",
 
-  "item.testmod.copper_wire_item": "Медный провод"
+  "block.testmod.creative_accumulator": "Творческий аккамулятор",
+  "block.testmod.wire_connector": "Коннекторы",
+
+  "block.testmod.basic_electric_motor": "Базовый электро мотор"
 }

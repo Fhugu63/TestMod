@@ -42,4 +42,43 @@ public class EnergyNetworksContainer {
     public static boolean containtEnergyNetwork(Long id) {
         return energyNetworks.containsKey(id);
     }
+
+    public static class clientEnergyNetworksContainer {
+        static HashMap<Long, EnergyNetwork.clientEnergyNetwork> clientEnergyNetworks = new HashMap<>();
+
+        /*public static EnergyNetwork.clientEnergyNetwork createEnergyNetwork() {
+            Random random = new Random();
+
+            Long id = random.nextLong();
+            while (clientEnergyNetworks.containsKey(id)) {
+                id = random.nextLong();
+            }
+            EnergyNetwork.clientEnergyNetwork energyNetwork = new EnergyNetwork.clientEnergyNetwork(id);
+
+            clientEnergyNetworks.put(id, clientEnergyNetworks);
+
+            return clientEnergyNetworks;
+        }*/
+
+        public static void removeEnergyNetwork(Long id) {
+            clientEnergyNetworks.remove(id);
+        }
+
+        public static EnergyNetwork.clientEnergyNetwork getEnergyNetwork(Long id) {
+            return clientEnergyNetworks.get(id);
+        }
+
+        public static Collection<EnergyNetwork.clientEnergyNetwork> getEnergyNetworks() {
+            return clientEnergyNetworks.values();
+        }
+
+        public static void putEnergyNetwork(Long id, EnergyNetwork.clientEnergyNetwork energyNetwork) {
+            clientEnergyNetworks.put(id, energyNetwork);
+        }
+
+        public static boolean containtEnergyNetwork(Long id) {
+            return clientEnergyNetworks.containsKey(id);
+        }
+    }
+
 }

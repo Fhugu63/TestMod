@@ -38,7 +38,8 @@ public class BasicElectricalMotorBlockEntity extends ElectricMotorBlockEntity im
     public void tick() {
         super.tick();
 
-        if (this.haveEnergyNetwork()) {
+        this.applyNewSpeed(16, 32);
+        /*if (this.haveEnergyNetwork()) {
             EnergyNetwork energyNetwork = EnergyNetworksContainer.getEnergyNetwork(this.getEnergyNetworkId());
             energyNetwork.getEnergy(requiresEnergy);
 
@@ -46,7 +47,7 @@ public class BasicElectricalMotorBlockEntity extends ElectricMotorBlockEntity im
             this.applyNewSpeed(nowSpeed, nowSpeed);
         } else {
             this.applyNewSpeed(0, 0);
-        }
+        }*/
     }
 
     @Override
@@ -80,28 +81,12 @@ public class BasicElectricalMotorBlockEntity extends ElectricMotorBlockEntity im
             while (true) {
                 BlockPos blockPos = new BlockPos(x, y, z);
                 BlockEntity blockEntity = this.level.getBlockEntity(blockPos);
-                System.out.println(blockEntity);
-                System.out.println(blockPos);
+
                 if (blockEntity != null && blockEntity.getClass() == WireConnectorBlockEntity.class && !blockEntity.isRemoved() && ((WireConnectorBlockEntity) blockEntity).haveEnergyNetwork()) {
                     WireConnectorBlockEntity wireConnectorBlockEntity = (WireConnectorBlockEntity) blockEntity;
                     EnergyNetwork energyNetwork = EnergyNetworksContainer.getEnergyNetwork(wireConnectorBlockEntity.getEnergyNetworkId());
 
-                    System.out.println(energyNetwork);
                     this.setEnergyNetworkId(energyNetwork.getId());
-
-                    ArrayList<Float> floatList = new ArrayList<>();
-
-                    floatList.add(energyNetwork.getTotalEnergy());
-                    floatList.add(energyNetwork.getMaxCanContainsEnergy());
-
-                    floatList.add(energyNetwork.getR());
-                    floatList.add(energyNetwork.getG());
-                    floatList.add(energyNetwork.getB());
-
-                    PacketDistributor.sendToServer(
-                            new EnergyNetworkRecord(floatList, energyNetwork.getId(),
-                                    energyNetwork.getEnergyBlocksPoses(), this.getBlockPos(), this.getBlockPos())
-                    );
 
                     break;
                 }
